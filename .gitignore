@@ -33,3 +33,5 @@ build/
 .vscode/
 
 .idea/
+
+./frontend/node_modules
