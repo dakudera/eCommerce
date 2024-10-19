@@ -5,13 +5,14 @@ import { Product } from '../common/product';
   providedIn: 'root',
 })
 export class ProductService {
-  private baseUrl = 'http://localhost:8080/api/products?size=100';
+  private baseUrl = 'http://localhost:8080/api/products';
 
   constructor() {}
 
-  async getProductList(): Promise<Product[]> {
+  async getProductList(categoryId: number): Promise<Product[]> {
     try {
-      const response = await fetch(this.baseUrl);
+      const url = `${this.baseUrl}/search/findAllByCategoryId?id=${categoryId}`;
+      const response = await fetch(url);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
