@@ -4,19 +4,26 @@ import { ProductService } from '../../services/product.service';
 import { CommonModule, NgFor } from '@angular/common';
 import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   standalone: true,
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
-  imports: [CommonModule, NgFor, HttpClientModule, RouterModule]
+  imports: [CommonModule, NgFor, HttpClientModule, RouterModule, NgbModule]
 })
 export class ProductListComponent implements OnInit {
 
   products: Product[] = [];
-  currentCategoryId: number = 1; // Default to 1
+  currentCategoryId: number = 1;
+  previousCategoryId: number = 1;
   searchMode: boolean = false;
+
+  pageNumber: number = 1;
+  pageSize: number = 5;
+  totalElements: number = 100;
+
 
   constructor(private productService: ProductService, private route: ActivatedRoute) { }
 
@@ -39,13 +46,20 @@ export class ProductListComponent implements OnInit {
   async handleSearchProducts() {
     const keyword: string = this.route.snapshot.paramMap.get('keyword')!;
     try {
-      this.products = await this.productService.searchProduct(keyword);
+      const response = await this.productService.searchProductPaginate(this.pageNumber - 1, this.pageSize, keyword);
+      this.processResult(response);
     } catch (error) {
       console.error('Error loading products:', error);
     }
   }
 
   async handleListProducts() {
+
+    if (this.previousCategoryId != this.currentCategoryId) {
+      this.pageNumber = 1;
+    }
+
+    this.previousCategoryId = this.currentCategoryId;
 
     const hasCategoryId: boolean = this.route.snapshot.paramMap.has('id');
     if (hasCategoryId) {
@@ -56,10 +70,26 @@ export class ProductListComponent implements OnInit {
     }
 
     try {
-      this.products = await this.productService.getProductList(this.currentCategoryId);
+      const response = await this.productService.getProductListPaginate(
+        this.pageNumber - 1, this.pageSize, this.currentCategoryId
+      );
+      this.processResult(response);
     } catch (error) {
       console.error('Error loading products:', error);
     }
+  }
+
+  updatePageSize(value: string){
+    this.pageSize=+value;
+    this.pageNumber=1;
+    this.listProducts();
+  }
+
+  processResult(response: any){
+    this.products = response._embedded.products;
+    this.pageNumber = response.page.number + 1;
+    this.pageSize = response.page.size;
+    this.totalElements = response.page.totalElements;
   }
 
 }

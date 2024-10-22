@@ -8,7 +8,7 @@ import { ProductCategory } from '../common/product-category';
 export class ProductService {
   private baseUrl = 'http://localhost:8080/api';
 
-  constructor() {}
+  constructor() { }
 
   async getProduct(productId: number): Promise<Product> {
     try {
@@ -34,6 +34,26 @@ export class ProductService {
       }
       const data: GetProductResponse = await response.json();
       return data._embedded.products;
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+      throw error;
+    }
+  }
+
+  async getProductListPaginate(
+    page: number,
+    pageSize: number,
+    categoryId: number
+  ): Promise<GetProductResponse> {
+    try {
+      const url = `${this.baseUrl}/products/search/findAllByCategoryId?`
+        + `id=${categoryId}&page=${page}&size=${pageSize}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: GetProductResponse = await response.json();
+      return data;
     } catch (error) {
       console.error('Error fetching product list:', error);
       throw error;
@@ -70,17 +90,45 @@ export class ProductService {
     }
   }
 
+  async searchProductPaginate(
+    page: number,
+    pageSize: number, 
+    keyword: string
+  ): Promise<GetProductResponse> {
+    try {
+      const url = `${this.baseUrl}/products/search/findByNameContaining?name=${keyword}`
+        + `&page=${page}&size=${pageSize}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: GetProductResponse = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+      throw error;
+    }
+  }
 
+
+}
+
+interface Page {
+  size: number,
+  totalElements: number,
+  totalPages: number,
+  number: number
 }
 
 interface GetProductResponse {
   _embedded: {
     products: Product[];
-  };
+  },
+  page: Page
 }
 
 interface GetProductCategoryResponse {
   _embedded: {
     productCategory: ProductCategory[];
-  };
+  }
 }

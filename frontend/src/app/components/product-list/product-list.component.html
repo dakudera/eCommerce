@@ -14,7 +14,42 @@
                         <a href="#" class="primary-btn">Add to cart</a>
                     </div>
                 </div>
+
+                <div *ngIf="products?.length == 0" class="alert alert-warning col-md-12">
+                    No products found
+                </div>
+
             </div>
+
+
+            <div class="footer-pagination">
+                <div class="row">
+                    <div class="col-md-5"></div>
+                    <div class="col-md-5">
+                        <div class="row">
+                            <div class="col-md-6" style="padding-right: 10%">
+                                <ngb-pagination [(page)]="pageNumber" [pageSize]="pageSize"
+                                    [collectionSize]="totalElements" [maxSize]="1" [boundaryLinks]="true"
+                                    (pageChange)="listProducts()">
+                                </ngb-pagination>
+                            </div>
+
+                            <div class="col-md-5 mt-2" style="text-align: right;">
+                                <span class="mr-2">Page Size</span>
+
+                                <select #pageSelect (change)="updatePageSize(pageSelect.value)">
+                                    <option selected="true">5</option>
+                                    <option>10</option>
+                                    <option>15</option>
+                                    <option>20</option>
+                                </select>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
