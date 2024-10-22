@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Product } from '../../common/product';
 import { ProductService } from '../../services/product.service';
 import { CommonModule, NgFor } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 
 @Component({
@@ -10,7 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
   selector: 'app-product-list',
   templateUrl: './product-list.component.html',
   styleUrls: ['./product-list.component.css'],
-  imports: [CommonModule, NgFor, HttpClientModule]
+  imports: [CommonModule, NgFor, HttpClientModule, RouterModule]
 })
 export class ProductListComponent implements OnInit {
 

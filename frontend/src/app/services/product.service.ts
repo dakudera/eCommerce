@@ -10,6 +10,21 @@ export class ProductService {
 
   constructor() {}
 
+  async getProduct(productId: number): Promise<Product> {
+    try {
+      const url = `${this.baseUrl}/products/${productId}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: Product = await response.json();
+      return data;
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+      throw error;
+    }
+  }
+
   async getProductList(categoryId: number): Promise<Product[]> {
     try {
       const url = `${this.baseUrl}/products/search/findAllByCategoryId?id=${categoryId}`;
