@@ -4,13 +4,15 @@ import { ProductListComponent } from './components/product-list/product-list.com
 import { ProductCategoryMenuComponent } from './components/product-category-menu/product-category-menu.component';
 import { SearchComponent } from './components/search/search.component';
 import { CartStatusComponent } from './components/cart-status/cart-status.component';
+import { CartDetailsComponent } from './components/cart-details/cart-details.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet, ProductListComponent, RouterModule, 
-    ProductCategoryMenuComponent, SearchComponent, CartStatusComponent],
+    ProductCategoryMenuComponent, SearchComponent, CartStatusComponent, 
+    CartDetailsComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
