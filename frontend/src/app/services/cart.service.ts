@@ -59,7 +59,6 @@ export class CartService {
     this.addToCart(cartItem);
   }
 
-
   decrementCartItem(cartItem: CartItem) {
     cartItem.quantity--;
 
@@ -68,8 +67,8 @@ export class CartService {
     } else {
       this.computeCartTotals();
     }
-
   }
+
   remove(cartItem: CartItem) {
     const itemIndex = this.cartItems.findIndex(c => c.id === cartItem.id);
 

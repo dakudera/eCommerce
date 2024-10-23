@@ -5,6 +5,7 @@ import { ProductCategoryMenuComponent } from './components/product-category-menu
 import { SearchComponent } from './components/search/search.component';
 import { CartStatusComponent } from './components/cart-status/cart-status.component';
 import { CartDetailsComponent } from './components/cart-details/cart-details.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-root',
@@ -12,7 +13,7 @@ import { CartDetailsComponent } from './components/cart-details/cart-details.com
   imports: [
     RouterOutlet, ProductListComponent, RouterModule, 
     ProductCategoryMenuComponent, SearchComponent, CartStatusComponent, 
-    CartDetailsComponent],
+    CartDetailsComponent, ReactiveFormsModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.css'
 })
