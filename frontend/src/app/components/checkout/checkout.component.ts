@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { CartService } from '../../services/cart.service';
 import { CommonModule, NgFor } from '@angular/common';
 import { ShopFormServiceService } from '../../services/shop-form-service.service';
+import { Country } from '../../common/country';
+import { State } from '../../common/state';
 
 @Component({
   selector: 'app-checkout',
@@ -17,15 +19,19 @@ export class CheckoutComponent implements OnInit {
   totalPrice: number = 0.00;
   totalQuantity: number = 0;
 
-  constructor(private formBuilder: FormBuilder, private cartService: CartService, 
+  countries: Country[] = [];
+  shippingAddressStates: State[] = [];
+  billingAddressStates: State[] = [];
+
+  constructor(private formBuilder: FormBuilder, private cartService: CartService,
     private shopFormService: ShopFormServiceService) { }
 
 
-    creaditCardYears: number[] = [];
-    creaditCardMonths: number[] = [];
+  creaditCardYears: number[] = [];
+  creaditCardMonths: number[] = [];
 
   ngOnInit(): void {
-    
+
     this.setReviewOrder();
     this.checkoutFormGroup = this.formBuilder.group(
       {
@@ -67,7 +73,7 @@ export class CheckoutComponent implements OnInit {
       }
     );
 
-    const startMonth: number = new Date().getMonth()+1;
+    const startMonth: number = new Date().getMonth() + 1;
 
     this.shopFormService.getCreditCardsMonth(startMonth).subscribe(
       data => {
@@ -81,38 +87,45 @@ export class CheckoutComponent implements OnInit {
       }
     );
 
+    this.initCountries();
+
   }
 
   onSubmit() {
   }
 
-  setReviewOrder(){
+  setReviewOrder() {
 
     this.cartService.totalPrice.subscribe(
       data => {
         this.totalPrice = data;
       }
     );
-    
+
     this.cartService.totalQuantity.subscribe(
       data => {
         this.totalQuantity = data;
       }
     );
-    console.log(this.totalPrice, this.totalQuantity);
   }
 
 
   copyShippingAddressToBillingAddress(event: Event) {
     const checkbox = event.target as HTMLInputElement;
-    if(checkbox.checked){
-      this.checkoutFormGroup.controls['billingAddress'].setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
-    }else{
+    if (checkbox.checked) {
+      this.checkoutFormGroup.controls['billingAddress']
+      .setValue(this.checkoutFormGroup.controls['shippingAddress'].value);
+
+      this.billingAddressStates = this.shippingAddressStates; 
+
+    } else {
       this.checkoutFormGroup.controls['billingAddress'].reset();
+
+      this.billingAddressStates = [];
     }
   }
 
-  handleMonthsAndYears(){
+  handleMonthsAndYears() {
     const creditCardFormGroup = this.checkoutFormGroup.get('creditCard');
 
     const currentYear: number = new Date().getFullYear();
@@ -121,10 +134,10 @@ export class CheckoutComponent implements OnInit {
 
     let startMonth: number = 0;
 
-    if(currentYear=== selectedYear){
-      startMonth = new Date().getMonth()+1;
-    }else{
-      startMonth+=1;
+    if (currentYear === selectedYear) {
+      startMonth = new Date().getMonth() + 1;
+    } else {
+      startMonth += 1;
     }
 
     this.shopFormService.getCreditCardsMonth(startMonth).subscribe(
@@ -132,6 +145,31 @@ export class CheckoutComponent implements OnInit {
         this.creaditCardMonths = data;
       }
     );
+  }
+
+  async initCountries() {
+    try {
+      this.countries = await this.shopFormService.getCountries();
+    } catch (error) {
+      console.error('Error loading products:', error);
+    }
+  }
+
+
+  async getStates(type: string) {
+    const formGroup = this.checkoutFormGroup.get(type);
+    const countryCode = formGroup?.value.country.code;
+
+    try {
+      const result: State[] = await this.shopFormService.getStates(countryCode);
+      if (type === 'shippingAddress') {
+        this.shippingAddressStates = result;
+      } else {
+        this.billingAddressStates = result;
+      }
+    } catch (error) {
+      console.error('Error loading products:', error);
+    }
   }
 
 }

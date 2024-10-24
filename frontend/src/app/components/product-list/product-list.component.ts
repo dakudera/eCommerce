@@ -100,7 +100,6 @@ export class ProductListComponent implements OnInit {
     const cartItem: CartItem = new CartItem(product);
 
     this.cartService.addToCart(cartItem);
-
   }
 
 

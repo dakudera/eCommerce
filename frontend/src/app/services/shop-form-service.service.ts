@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
+import { Country } from '../common/country';
+import { State } from '../common/state';
 
 @Injectable({
   providedIn: 'root'
 })
 export class ShopFormServiceService {
+  private baseUrl = 'http://localhost:8080/api';
 
   constructor() { }
 
@@ -30,4 +33,46 @@ export class ShopFormServiceService {
     return of(data);
   }
 
+  async getCountries(): Promise<Country[]> {
+    try {
+      const url = `${this.baseUrl}/countries`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: GetCountriesResponse = await response.json();
+      return data._embedded.countries;
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+      throw error;
+    }
+  }
+
+  async getStates(code: string): Promise<State[]> {
+    try {
+      const url = `${this.baseUrl}/states/search/findByCountryCode?code=${code}`;
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      const data: GetStatesResponse = await response.json();
+      return data._embedded.states;
+    } catch (error) {
+      console.error('Error fetching product list:', error);
+      throw error;
+    }
+  }
+
+}
+
+interface GetCountriesResponse {
+  _embedded: {
+    countries: Country[];
+  }
+}
+
+interface GetStatesResponse {
+  _embedded: {
+    states: State[];
+  }
 }
