@@ -1,50 +1,47 @@
 import { Component, Inject, OnInit } from '@angular/core';
-import { OKTA_AUTH } from '@okta/okta-angular';
-import { OktaAuth } from '@okta/okta-auth-js';
 import { OktaSignIn } from '@okta/okta-signin-widget';
 import appConfig from '../../config/app-config';
+import { CommonModule } from '@angular/common';
+import { FormsModule, NgForm, NgModel, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent implements OnInit {
 
-  oktaSignin: any;
+  username: string = '';
+  password: string = '';
 
-  constructor(@Inject(OKTA_AUTH) private oktaAuth: OktaAuth) {
-    this.oktaSignin = new OktaSignIn({
-      logo: 'assets/favicon.ico',
-      baseUrl: appConfig.oidc.issuer.split('/oauth2')[0],
-      clientId: appConfig.oidc.clientId,
-      redirectUri: appConfig.oidc.redirectUri,
-      authParams: {
-        pkce: true,
-        issuer: appConfig.oidc.issuer,
-        scopes: appConfig.oidc.scope
-      }
-    });
-  }
+  constructor() {}
 
   ngOnInit(): void {
-    this.oktaSignin.remove();
+    // this.oktaSignin.remove();
 
-    this.oktaSignin.renderEl(
-      {
-        el: '#okta-sign-in-widget'
-      },
-      (response: any) => {
-        if(response.status === 'SUCCESS'){
-          this.oktaAuth.signInWithRedirect();
-        }
-      },
-      (error: any) =>{
-        throw error;
-      }
-    );
+    // this.oktaSignin.renderEl(
+    //   {
+    //     el: '#okta-sign-in-widget'
+    //   },
+    //   (response: any) => {
+    //     if(response.status === 'SUCCESS'){
+    //       this.oktaAuth.signInWithRedirect();
+    //     }
+    //   },
+    //   (error: any) =>{
+    //     throw error;
+    //   }
+    // );
+  }
+
+  onSubmit(){
+    if (this.username && this.password) {
+    } else {
+      alert('Please enter valid credentials');
+    }
   }
 
 }

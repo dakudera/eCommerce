@@ -1,4 +1,9 @@
 spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:18080/realms/ecommerce
   datasource:
     url: jdbc:mysql://localhost:3306/ecommerce
     username: ecommerce
@@ -10,3 +15,18 @@ spring:
   data:
     rest:
       base-path: /api
+
+jwt:
+  auth:
+    converter:
+      resource-id: my-super-client
+      principal-attribute: preferred_username
+    login:
+      url: http://localhost:18080/realms/ecommerce/protocol/openid-connect/token
+      grant_type: password
+      client_id: login-client
+    registration:
+      url: http://localhost:18080/admin/realms/ecommerce/users
+      grant_type: client_credentials
+      client_id: registration-client
+      client_secret: xHVINAzZN5dKoETW68k4sOwmkqLMPvoK
